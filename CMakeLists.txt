@@ -11,7 +11,7 @@ qt_add_executable(MiniPad
 qt_add_qml_module(MiniPad
     URI "Main"
     QML_FILES 
-        src/Main.qml
+        qml/Main.qml
 )
 
 target_include_directories(MiniPad
