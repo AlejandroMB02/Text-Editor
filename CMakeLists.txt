@@ -6,6 +6,7 @@ qt_standard_project_setup(REQUIRES 6.5)
 
 qt_add_executable(MiniPad 
     src/main.cpp
+    src/models/PlainTextModel.cpp
 )
 
 qt_add_qml_module(MiniPad
