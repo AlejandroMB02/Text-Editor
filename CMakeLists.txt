@@ -13,6 +13,7 @@ qt_add_qml_module(MiniPad
     URI "Main"
     QML_FILES 
         qml/Main.qml
+        qml/components/MenuDesplegable.qml
 )
 
 target_include_directories(MiniPad

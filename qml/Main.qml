@@ -1,19 +1,47 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import Editor 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import QtQuick.Dialogs
+import Editor
+import Main
 
 ApplicationWindow {
     id: window
     visible: true
     width: 600
     height: 400
-    title: "MiniPad - Test"
+    title: "MiniPad"
+
+    MenuDesplegable {
+        id: menu
+        onOpenFileRequested: fileDialog.open()
+    }
+
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            ToolButton {
+                text: qsTr("⋮")
+                onClicked: menu.open()
+            }
+            ToolButton {
+                text: qsTr("‹")
+                onClicked: stack.pop()
+            }
+            Label {
+                text: "Title"
+                elide: Label.ElideRight
+                horizontalAlignment: Qt.AlignHCenter
+                verticalAlignment: Qt.AlignVCenter
+                Layout.fillWidth: true
+            }
+        }
+    }
 
     // Modelo de texto
     TextDocumentModel {
         id: textDoc
-        filePath: "/home/alejandro/set_resolution.sh"  // <- Cambia aquí por un archivo real
-        Component.onCompleted: textDoc.load()
+        filePath: ""
     }
 
     // Vista simple
@@ -24,6 +52,18 @@ ApplicationWindow {
             text: line
             font.family: "Monospace"
             font.pointSize: 12
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: "Selecciona un archivo"
+        nameFilters: ["Todos (*.*)"]
+
+        onAccepted: {
+            var localPath = selectedFile.toString().replace("file://", "")
+            textDoc.filePath = localPath
+            textDoc.load()
         }
     }
 }
