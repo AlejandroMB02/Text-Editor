@@ -6,10 +6,15 @@ Menu {
     id: menu
 
     signal openFileRequested()
+    signal saveRequested()
 
     MenuItem {
         text: "Abrir archivo..."
         onTriggered: menu.openFileRequested()
+    }
+    MenuItem {
+        text: "Guardar cambios"
+        onTriggered: menu.saveRequested()
     }
     MenuItem {
         text: "Opciones"

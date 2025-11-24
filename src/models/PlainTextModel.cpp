@@ -51,6 +51,7 @@ bool PlainTextModel::setData(const QModelIndex &index, const QVariant &value, in
         m_lines[row] = newLine;
         emit dataChanged(index, index, { LineRole });
         setModified(true);
+        emit contentChanged();
     }
 
     return true;
@@ -66,10 +67,10 @@ Qt::ItemFlags PlainTextModel::flags(const QModelIndex &index) const
 
 QHash<int, QByteArray> PlainTextModel::roleNames() const
 {
-    return {
-        { LineRole, "line" }
-    };
-}
+    QHash<int, QByteArray> roles;
+    roles[LineRole] = "line";
+    return roles;
+} 
 
 /* =============================
  *          PROPERTIES
@@ -85,6 +86,16 @@ bool PlainTextModel::isModified() const
     return m_modified;
 }
 
+QString PlainTextModel::content() const
+{
+    // 1. Convertir std::vector<QString> a QVector<QString>
+    QVector<QString> qVectorLines(m_lines.begin(), m_lines.end());
+    
+    // 2. Usar QVector<QString> para crear un QStringList y luego unir.
+    // O más conciso, crear el QStringList directamente y luego unir:
+    return QStringList(qVectorLines.toList()).join(QLatin1String("\n"));
+}
+
 void PlainTextModel::setFilePath(const QString &path)
 {
     if (m_filePath == path)
@@ -92,6 +103,26 @@ void PlainTextModel::setFilePath(const QString &path)
 
     m_filePath = path;
     emit filePathChanged();
+}
+
+void PlainTextModel::setContent(const QString &text)
+{
+    // No hacer nada si el contenido es el mismo
+    if (content() == text)
+        return;
+
+    // Notificar a las vistas que el modelo va a cambiar drásticamente
+    beginResetModel();
+
+    // Dividir el texto completo en líneas
+    QList<QString> qlines = text.split('\n');
+    m_lines.assign(qlines.begin(), qlines.end());
+
+    setModified(true);
+    emit contentChanged();
+
+    // Notificar a las vistas que el modelo ha cambiado
+    endResetModel();
 }
 
 /* =============================
@@ -125,17 +156,19 @@ bool PlainTextModel::load()
     }
 
     QTextStream stream(&file);
+    QString fullText = stream.readAll(); // Lee todo el contenido
+    file.close();
+
+    QList<QString> qlines = fullText.split('\n');
 
     beginResetModel();
-    m_lines.clear();
-
-    while (!stream.atEnd()) {
-        m_lines.push_back(stream.readLine());
-    }
-
+    m_lines.assign(qlines.begin(), qlines.end()); // Asignación usando iteradores
     endResetModel();
 
+    // Emitir signals después de la carga
+    emit contentChanged();
     setModified(false);
+
     return true;
 }
 
@@ -147,18 +180,18 @@ bool PlainTextModel::save()
     }
 
     QFile file(m_filePath);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         qWarning() << "Could not open file for writing:" << m_filePath;
         return false;
     }
 
-    QTextStream stream(&file);
+    QTextStream out(&file);
+    // Escribir el contenido completo
+    out << content();
 
-    for (const QString &line : m_lines) {
-        stream << line << "\n";
-    }
+    file.close();
 
-    setModified(false);
+    setModified(false); // No modificado después de guardar con éxito
     return true;
 }
 
@@ -176,6 +209,7 @@ void PlainTextModel::insertLine(int index, const QString &text)
     endInsertRows();
 
     setModified(true);
+    emit contentChanged();
 }
 
 void PlainTextModel::removeLine(int index)
@@ -188,6 +222,7 @@ void PlainTextModel::removeLine(int index)
     endRemoveRows();
 
     setModified(true);
+    emit contentChanged();
 }
 
 void PlainTextModel::appendLine(const QString &text)
@@ -199,4 +234,5 @@ void PlainTextModel::appendLine(const QString &text)
     endInsertRows();
 
     setModified(true);
+    emit contentChanged();
 }

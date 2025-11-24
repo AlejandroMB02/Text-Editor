@@ -15,6 +15,14 @@ ApplicationWindow {
     MenuDesplegable {
         id: menu
         onOpenFileRequested: fileDialog.open()
+        onSaveRequested: {
+            if(textDoc.modified && textDoc.filePath !== ""){
+                handleSaveRequest()
+            }
+            else {
+                console.log("No es posible guardar el archivo")
+            }
+        }
     }
 
     header: ToolBar {
@@ -29,7 +37,7 @@ ApplicationWindow {
                 onClicked: stack.pop()
             }
             Label {
-                text: "Title"
+                text: "MiniPad"
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
@@ -45,6 +53,7 @@ ApplicationWindow {
     }
 
     // Vista simple
+    /*
     ListView {
         anchors.fill: parent
         model: textDoc
@@ -52,6 +61,37 @@ ApplicationWindow {
             text: line
             font.family: "Monospace"
             font.pointSize: 12
+        }
+    }
+    */
+    TextArea {
+        id: editorArea
+        anchors.fill: parent
+        anchors.margins: 5
+        
+        // Enlace bidireccional simple (content se actualizará al cargar)
+        text: textDoc.content
+
+        onTextChanged: {
+            if (textDoc.filePath !== "") {
+                // Llama a setModified(true) en C++ sin cambiar el contenido interno de m_lines
+                textDoc.setModified(true) 
+            }
+        }
+        
+        // Estilo de fuente
+        font.family: "Monospace"
+        font.pointSize: 12
+    }
+
+    // Manejadores de señales
+
+    function handleSaveRequest() {
+        textDoc.setContent(editorArea.text)
+        if (textDoc.save()) {
+            console.log("Archivo guardado con éxito.")
+        } else {
+            console.log("Error al guardar archivo.")
         }
     }
 
