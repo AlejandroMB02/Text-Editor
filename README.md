@@ -24,9 +24,10 @@ Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcio
 
 ## Instalación y compilación
 
-'''bash
+```bash
 gh repo clone AlejandroMB02/Text-Editor
 cd Text-Editor
 cmake -DCMAKE_PREFIX_PATH=/ruta/a/QT/gcc_64 -S ./ -B ./build -G Ninja
 cmake --build build
 ./build/MiniPad
+```
