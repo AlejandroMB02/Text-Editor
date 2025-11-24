@@ -183,4 +183,47 @@ ApplicationWindow {
             }
         }
     }
+
+    // Atajos de teclado
+    // Atajo: Ctrl + S (Guardar)
+    Shortcut {
+        sequence: StandardKey.Save // Mapea a Ctrl+S (o Cmd+S en macOS)
+        onActivated: {
+            // Reutilizamos la lógica que ya tienes en onSaveRequested
+            if (textDoc.modified && textDoc.filePath !== ""){
+                handleSaveRequest()
+            }
+            else {
+                // Si es un archivo nuevo, lo tratamos como Guardar Como
+                if (textDoc.modified) {
+                    saveAsFileDialog.open()
+                } else {
+                    console.log("El archivo no ha sido modificado.")
+                }
+            }
+        }
+    }
+    // Atajo: Ctrl + Shift + S (Guardar Como)
+    Shortcut {
+        sequence: "Ctrl+Shift+S" 
+        onActivated: {
+            // Solo abrimos el diálogo, sin condiciones
+            saveAsFileDialog.open()
+        }
+    }
+    // Atajo: Ctrl + O (Abrir)
+    Shortcut {
+        sequence: StandardKey.Open // Mapea a Ctrl+O (o Cmd+O en macOS)
+        // Usamos el manejador que ya abre el diálogo de archivos
+        onActivated: {
+            if (textDoc.modified) {
+                // Muestra la alerta si hay cambios sin guardar
+                discardDialog.pendingAction = discardDialog.open_file
+                discardDialog.open()
+            } else {
+                // Abre el diálogo directamente
+                fileDialog.open() 
+            }
+        }
+    }
 }
