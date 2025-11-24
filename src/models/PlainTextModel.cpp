@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QFileInfo>
 
 PlainTextModel::PlainTextModel(QObject *parent)
     : QAbstractListModel(parent),
@@ -79,6 +80,18 @@ QHash<int, QByteArray> PlainTextModel::roleNames() const
 QString PlainTextModel::filePath() const
 {
     return m_filePath;
+}
+
+QString PlainTextModel::fileName() const
+{
+    // 1. Si la ruta está vacía (archivo nuevo), retornar "Sin título".
+    if (m_filePath.isEmpty()) {
+        return "Sin título";
+    }
+    
+    // 2. Usar QFileInfo para obtener solo el nombre del archivo de la ruta completa.
+    QFileInfo fileInfo(m_filePath);
+    return fileInfo.fileName();
 }
 
 bool PlainTextModel::isModified() const
@@ -193,6 +206,17 @@ bool PlainTextModel::save()
 
     setModified(false); // No modificado después de guardar con éxito
     return true;
+}
+
+bool PlainTextModel::saveAs(const QString &newPath){
+    if (newPath.isEmpty()) {
+        qWarning() << "Cannot save: New path is empty.";
+        return false;
+    }
+
+    setFilePath(newPath);
+
+    return save();
 }
 
 /* =============================

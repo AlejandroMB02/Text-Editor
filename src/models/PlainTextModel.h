@@ -12,6 +12,7 @@ class PlainTextModel : public QAbstractListModel
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
     Q_PROPERTY(bool modified READ isModified NOTIFY modifiedChanged)
     Q_PROPERTY(QString content READ content NOTIFY contentChanged)
+    Q_PROPERTY(QString fileName READ fileName NOTIFY filePathChanged)
 
 public:
     explicit PlainTextModel(QObject *parent = nullptr);
@@ -31,6 +32,7 @@ public:
 
     // Getters
     QString filePath() const;
+    QString fileName() const;
     bool isModified() const;
     QString content() const;
 
@@ -42,6 +44,7 @@ public:
     // Operations
     Q_INVOKABLE bool load();
     Q_INVOKABLE bool save();
+    Q_INVOKABLE bool saveAs(const QString &newPath);
     Q_INVOKABLE void insertLine(int index, const QString &text);
     Q_INVOKABLE void removeLine(int index);
     Q_INVOKABLE void appendLine(const QString &text);

@@ -20,9 +20,14 @@ ApplicationWindow {
                 handleSaveRequest()
             }
             else {
-                console.log("No es posible guardar el archivo")
+                if (textDoc.modified) {
+                    saveAsFileDialog.open()
+                } else {
+                    console.log("El archivo no ha sido modificado.")
+                }
             }
         }
+        onSaveAsRequested: saveAsFileDialog.open()
     }
 
     header: ToolBar {
@@ -37,7 +42,7 @@ ApplicationWindow {
                 onClicked: stack.pop()
             }
             Label {
-                text: "MiniPad"
+                text: textDoc.fileName
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
@@ -53,17 +58,6 @@ ApplicationWindow {
     }
 
     // Vista simple
-    /*
-    ListView {
-        anchors.fill: parent
-        model: textDoc
-        delegate: Text {
-            text: line
-            font.family: "Monospace"
-            font.pointSize: 12
-        }
-    }
-    */
     TextArea {
         id: editorArea
         anchors.fill: parent
@@ -98,12 +92,33 @@ ApplicationWindow {
     FileDialog {
         id: fileDialog
         title: "Selecciona un archivo"
-        nameFilters: ["Todos (*.*)"]
+        nameFilters: ["Todos (*)"]
 
         onAccepted: {
             var localPath = selectedFile.toString().replace("file://", "")
             textDoc.filePath = localPath
             textDoc.load()
+        }
+    }
+
+    FileDialog {
+        id: saveAsFileDialog
+        title: "Guardar archivo como..."
+        fileMode: FileDialog.SaveFile // Indica que la operación es para guardar
+        nameFilters: ["Archivos de Texto (*.txt)", "Todos (*.*)"]
+
+        onAccepted: {
+            var newLocalPath = selectedFile.toString().replace("file://", "")
+            
+            // 1. Asegurar que el texto actual del editor esté en el modelo C++
+            textDoc.setContent(editorArea.text) 
+            
+            // 2. Llamar a la función saveAs en C++
+            if (textDoc.saveAs(newLocalPath)) {
+                console.log("Archivo guardado como " + newLocalPath)
+            } else {
+                console.log("Error al guardar archivo como.")
+            }
         }
     }
 }
