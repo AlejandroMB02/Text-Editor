@@ -119,25 +119,27 @@ ApplicationWindow {
         filePath: ""
     }
 
-    // Vista simple
-    TextArea {
-        id: editorArea
+    ScrollView {
         anchors.fill: parent
         anchors.margins: 5
-        
-        // Enlace bidireccional simple (content se actualizará al cargar)
-        text: textDoc.content
 
-        onTextChanged: {
-            if (textDoc.filePath !== "") {
-                // Llama a setModified(true) en C++ sin cambiar el contenido interno de m_lines
-                textDoc.setModified(true) 
+        TextArea {
+            id: editorArea
+            
+            // Enlace bidireccional simple (content se actualizará al cargar)
+            text: textDoc.content
+
+            onTextChanged: {
+                if (textDoc.filePath !== "") {
+                    // Llama a setModified(true) en C++ sin cambiar el contenido interno de m_lines
+                    textDoc.setModified(true) 
+                }
             }
+            
+            // Estilo de fuente
+            font.family: "Monospace"
+            font.pointSize: 12
         }
-        
-        // Estilo de fuente
-        font.family: "Monospace"
-        font.pointSize: 12
     }
 
     // Manejadores de señales
