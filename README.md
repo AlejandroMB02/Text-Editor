@@ -1,2 +1,32 @@
-# Text-Editor
-A minimalist text editor developed in QML as a learning exercise to delve deeper into the language and core computer science concepts.
+# 📝 Notepad++-Like Text Editor (C++ & Qt/QML)
+
+Un editor de texto ligero, desarrollado en **C++** utilizando **Qt/QML**.  
+Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcional.
+
+## 🚀 Características actuales
+
+- ✏️ Carga y visualización de archivos
+- 🎨 Interfaz moderna construida con QML
+- 🔧 Arquitectura modular en C++ + QML
+
+## 🚀 Características en desarrollo
+
+- ✏️ Edición de texto básica
+- 💾 Guardar cambios
+- ⌨️ Atajos de teclado
+
+## 🛠️ Tecnologías utilizadas
+
+- C++
+- Qt
+- QML / Qt Quick
+- CMake
+
+## Instalación y compilación
+
+'''bash
+gh repo clone AlejandroMB02/Text-Editor
+cd Text-Editor
+cmake -DCMAKE_PREFIX_PATH=/ruta/a/QT/gcc_64 -S ./ -B ./build -G Ninja
+cmake --build build
+./build/MiniPad
