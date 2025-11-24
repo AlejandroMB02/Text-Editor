@@ -5,6 +5,8 @@ import QtQuick.Layouts
 Menu {
     id: menu
 
+    property bool isDocumentModified: false
+
     signal openFileRequested()
     signal saveRequested()
     signal saveAsRequested()
@@ -15,6 +17,7 @@ Menu {
     }
     MenuItem {
         text: "Guardar"
+        enabled: isDocumentModified
         onTriggered: menu.saveRequested()
     }
     MenuItem {
@@ -23,10 +26,12 @@ Menu {
     }
     MenuItem {
         text: "Opciones"
+        enabled: false
         onTriggered: console.log("Opciones seleccionada")
     }
     MenuItem {
         text: "Configuración"
+        enabled: false
         onTriggered: console.log("Configuración seleccionada")
     }
     MenuSeparator {}

@@ -11,10 +11,30 @@ ApplicationWindow {
     width: 600
     height: 400
     title: "MiniPad"
+    onClosing: (close) => {
+        if (textDoc.modified) {
+            // Cancelamos el cierre automático
+            close.accepted = false
+            
+            // Mostramos la alerta
+            discardDialog.pendingAction = discardDialog.close_window
+            discardDialog.open()
+        }
+    }
 
     MenuDesplegable {
         id: menu
-        onOpenFileRequested: fileDialog.open()
+        isDocumentModified: textDoc.modified
+        onOpenFileRequested: {
+            if (textDoc.modified) {
+                // Si está modificado, mostramos la alerta
+                discardDialog.pendingAction = discardDialog.open_file
+                discardDialog.open()
+            } else {
+                // Si no está modificado, abrimos el diálogo directamente
+                fileDialog.open() 
+            }
+        }
         onSaveRequested: {
             if(textDoc.modified && textDoc.filePath !== ""){
                 handleSaveRequest()
@@ -30,16 +50,58 @@ ApplicationWindow {
         onSaveAsRequested: saveAsFileDialog.open()
     }
 
+    // DIÁLOGO DE CONFIRMACIÓN AL PERDER CAMBIOS
+    MessageDialog {
+        id: discardDialog
+        title: "¡Cambios sin guardar!"
+        text: "¿Deseas guardar los cambios antes de continuar?"
+        
+        // Botones: Guardar, Descartar, Cancelar
+        buttons: MessageDialog.Save | MessageDialog.Discard | MessageDialog.Cancel
+        
+        // Propiedad auxiliar para saber qué acción inicial disparó el diálogo
+        property int pendingAction: -1 
+        readonly property int open_file: 1
+        readonly property int close_window: 2
+        
+        // Manejo de la acción del usuario
+        onButtonClicked: (button) => {
+            if (button === MessageDialog.Save) {
+                // 1. Si el usuario selecciona Guardar
+                handleSaveRequest()
+                
+                // Si guardamos con éxito, procedemos con la acción pendiente
+                if (!textDoc.modified) {
+                    processPendingAction()
+                }
+            } else if (button === MessageDialog.Discard) {
+                // 2. Si el usuario selecciona Descartar, procedemos sin guardar
+                textDoc.setModified(false)
+                processPendingAction()
+            }
+            // 3. Si el usuario selecciona Cancelar, no hacemos nada (el diálogo se cierra)
+        }
+        
+        // Lógica para ejecutar la acción que estaba pendiente
+        function processPendingAction() {
+            if (pendingAction === open_file) {
+                // Si la acción era abrir otro archivo, abrimos el diálogo de apertura
+                textDoc.setModified(false)
+                fileDialog.open()
+            } else if (pendingAction === close_window) {
+                // Si la acción era cerrar la ventana, permitimos el cierre
+                window.close()
+            }
+            pendingAction = -1 // Resetear
+        }
+    }
+
     header: ToolBar {
         RowLayout {
             anchors.fill: parent
             ToolButton {
                 text: qsTr("⋮")
                 onClicked: menu.open()
-            }
-            ToolButton {
-                text: qsTr("‹")
-                onClicked: stack.pop()
             }
             Label {
                 text: textDoc.fileName
