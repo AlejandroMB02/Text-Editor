@@ -5,14 +5,12 @@ Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcio
 
 ## 🚀 Características actuales
 
-- ✏️ Carga y visualización de archivos
+- ✏️ Edición de texto
+- 💾 Guardar cambios
 - 🎨 Interfaz moderna construida con QML
 - 🔧 Arquitectura modular en C++ + QML
 
 ## 🚀 Características en desarrollo
-
-- ✏️ Edición de texto básica
-- 💾 Guardar cambios
 - ⌨️ Atajos de teclado
 
 ## 🛠️ Tecnologías utilizadas
