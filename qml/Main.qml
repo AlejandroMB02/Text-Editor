@@ -11,6 +11,24 @@ ApplicationWindow {
     width: 600
     height: 400
     title: "MiniPad"
+
+    property int currentFontSize: 12
+
+    // Propiedad de tema
+    readonly property int light: 0
+    readonly property int dark: 1
+    property int theme: light
+
+    // Colores basados en el tema
+    property color windowColor: theme === dark ? "#333333" : "#f0f0f0" // Fondo de la ventana
+    property color editorColor: theme === dark ? "#282828" : "#ffffff" // Fondo del área de texto
+    property color textColor: theme === dark ? "#ffffff" : "#000000"   // Color del texto
+    property color toolBarColor: theme === dark ? "#444444" : "#e0e0e0" // Color de la barra de herramientas
+    property color toolBarTextColor: theme === dark ? "#ffffff" : "#000000" // Color del texto de la barra
+
+    // Asignar el color de fondo de la ventana
+    color: windowColor
+
     onClosing: (close) => {
         if (textDoc.modified) {
             // Cancelamos el cierre automático
@@ -48,6 +66,13 @@ ApplicationWindow {
             }
         }
         onSaveAsRequested: saveAsFileDialog.open()
+        onChangeThemeRequested: {
+            if (window.theme === window.light) {
+                window.theme = window.dark
+            } else {
+                window.theme = window.light
+            }
+        }
     }
 
     // DIÁLOGO DE CONFIRMACIÓN AL PERDER CAMBIOS
@@ -97,14 +122,19 @@ ApplicationWindow {
     }
 
     header: ToolBar {
+        // Aplicación del tema a ToolBar
+        background: Rectangle { color: window.toolBarColor }
+
         RowLayout {
             anchors.fill: parent
             ToolButton {
                 text: qsTr("⋮")
                 onClicked: menu.open()
             }
+
             Label {
                 text: textDoc.fileName
+                color: window.toolBarTextColor
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
@@ -125,9 +155,15 @@ ApplicationWindow {
 
         TextArea {
             id: editorArea
+            color: textColor
             
             // Enlace bidireccional simple (content se actualizará al cargar)
             text: textDoc.content
+
+            background: Rectangle {
+                color: editorColor
+                border.color: "gray"
+            }
 
             onTextChanged: {
                 if (textDoc.filePath !== "") {
@@ -138,7 +174,7 @@ ApplicationWindow {
             
             // Estilo de fuente
             font.family: "Monospace"
-            font.pointSize: 12
+            font.pointSize: currentFontSize
         }
     }
 
@@ -226,6 +262,34 @@ ApplicationWindow {
                 // Abre el diálogo directamente
                 fileDialog.open() 
             }
+        }
+    }
+    Shortcut {
+        // La secuencia para Ctrl + Más
+        sequence: "Ctrl++" 
+        
+        // La acción que se ejecutará
+        onActivated: {
+            // Aumenta el tamaño en 2 puntos
+            currentFontSize += 2; 
+            // Opcional: Establecer un límite máximo
+            if (currentFontSize > 100) {
+                currentFontSize = 100;
+            }
+            console.log("Fuente aumentada a:", currentFontSize);
+        }
+    }
+    Shortcut {
+        sequence: "Ctrl+-"
+        onActivated: {
+            // Disminuye el tamaño en 2 puntos
+            currentFontSize -= 2; 
+            
+            // Opcional: Establecer un límite mínimo
+            if (currentFontSize < 4) {
+                currentFontSize = 4;
+            }
+            console.log("Fuente disminuida a:", currentFontSize);
         }
     }
 }

@@ -10,6 +10,7 @@ Menu {
     signal openFileRequested()
     signal saveRequested()
     signal saveAsRequested()
+    signal changeThemeRequested()
 
     MenuItem {
         text: "Abrir archivo..."
@@ -24,15 +25,13 @@ Menu {
         text: "Guardar como..."
         onTriggered: menu.saveAsRequested()
     }
-    MenuItem {
-        text: "Opciones"
-        enabled: false
-        onTriggered: console.log("Opciones seleccionada")
-    }
-    MenuItem {
-        text: "Configuración"
-        enabled: false
-        onTriggered: console.log("Configuración seleccionada")
+    Menu {
+        title: "Configuración"
+        cascade: true
+        MenuItem {
+            text: "Cambiar Tema"
+            onTriggered: menu.changeThemeRequested()
+        }
     }
     MenuSeparator {}
     MenuItem {
