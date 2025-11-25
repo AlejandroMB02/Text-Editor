@@ -1,4 +1,4 @@
-# 📝 Notepad++-Like Text Editor (C++ & Qt/QML)
+# 📝 MiniPad Text Editor (C++ & Qt/QML)
 
 Un editor de texto ligero, desarrollado en **C++** utilizando **Qt/QML**.  
 Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcional.
