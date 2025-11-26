@@ -3,16 +3,14 @@
 Un editor de texto ligero, desarrollado en **C++** utilizando **Qt/QML**.  
 Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcional.
 
-## 🚀 Características actuales
+## 🚀 Características
 
 - ✏️ Edición de texto
 - 💾 Guardar cambios
 - 🎨 Interfaz moderna construida con QML
 - 🔧 Arquitectura modular en C++ + QML
-
-## 🚀 Características en desarrollo
 - ⌨️ Atajos de teclado
-
+- 
 ## 🛠️ Tecnologías utilizadas
 
 - C++
