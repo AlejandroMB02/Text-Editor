@@ -10,7 +10,7 @@ Se centra en la simplicidad, la velocidad y una interfaz minimalista pero funcio
 - 🎨 Interfaz moderna construida con QML
 - 🔧 Arquitectura modular en C++ + QML
 - ⌨️ Atajos de teclado
-- 
+
 ## 🛠️ Tecnologías utilizadas
 
 - C++
