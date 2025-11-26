@@ -125,10 +125,15 @@ ApplicationWindow {
         // Aplicación del tema a ToolBar
         background: Rectangle { color: window.toolBarColor }
 
+        //height: 25
+
         RowLayout {
             anchors.fill: parent
             ToolButton {
-                text: qsTr("⋮")
+                Text {
+                    color: window.toolBarTextColor
+                    text: "⋮"
+                }
                 onClicked: menu.open()
             }
 
@@ -155,13 +160,13 @@ ApplicationWindow {
 
         TextArea {
             id: editorArea
-            color: textColor
+            color: window.textColor //
             
             // Enlace bidireccional simple (content se actualizará al cargar)
             text: textDoc.content
 
             background: Rectangle {
-                color: editorColor
+                color: window.editorColor
                 border.color: "gray"
             }
 
